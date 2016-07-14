@@ -5,12 +5,12 @@
 DIR=$(dirname "$0")
 
 function build(){
-    echo $1|egrep '\.go$'
+    echo $1|egrep '\.go$' > /dev/null
     if [ 0 -eq $? ];then
-        go build *.go >$DIR/buildresult 2>&1
+        go build -o mm *.go >$DIR/buildresult 2>&1
         cat $DIR/buildresult
         rm -f $DIR/buildresult
-        echo "build finish"
+        echo "build finish" $(date +"%H:%M:%S")
     # else
         # echo "$1 change, ignore"
     fi

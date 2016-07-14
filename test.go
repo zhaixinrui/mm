@@ -4,6 +4,9 @@ import "fmt"
 
 var cmdTest = &Command{
     UsageLine: "test [appname]",
+    Short: "test case",
+    Long: `
+`,
 }
 
 func init() {

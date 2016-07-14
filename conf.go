@@ -2,7 +2,7 @@ package main
 
 import "encoding/json"
 import "os"
-import "fmt"
+// import "fmt"
 
 // var Conf map[string] interface{}
 
@@ -25,7 +25,6 @@ func LoadConfig(confFile string) (error) {
         return err
     }
 
-    fmt.Println(Conf)
-
+    // fmt.Println(Conf)
     return nil
 }
