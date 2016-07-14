@@ -1,10 +1,5 @@
-package host
+package main
 
 type hostList struct {
     confFile string
-    
-}
-
-func () {
-    
 }
