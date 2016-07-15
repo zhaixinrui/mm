@@ -16,6 +16,7 @@ type Command struct {
     UsageLine string
     Short template.HTML
     Long template.HTML
+    Flag flag.FlagSet
 }
 
 var commands = []*Command{
@@ -26,30 +27,6 @@ var commands = []*Command{
 func (c *Command) Name() string {
     usageLine := strings.Split(c.UsageLine, " ")
     return usageLine[0]
-}
-
-func main() {
-    LoadConfig("conf/mm.conf")
-    // flag.Usage = usage()
-    flag.Parse()
-    args := flag.Args()
-    // fmt.Println(args)
-
-    if len(args) < 1 {
-        usage()
-        return
-    }
-
-    if "help" == args[0] {
-        help(args[1:])
-        return
-    }
-
-    for _,cmd := range commands {
-        if cmd.Name() == args[0] {
-            cmd.Run(cmd, args)
-        }
-    }
 }
 
 var usageTemplate = `mm is a tool for managing machines
@@ -102,8 +79,28 @@ func help(args []string) {
     os.Exit(2)
 }
 
+func main() {
+    // flag.Usage = usage()
+    flag.Parse()
+    args := flag.Args()
+    // fmt.Println(args)
 
+    if len(args) < 1 {
+        usage()
+        return
+    }
 
+    if "help" == args[0] {
+        help(args[1:])
+        return
+    }
+
+    for _,cmd := range commands {
+        if cmd.Name() == args[0] {
+            cmd.Run(cmd, args[1:])
+        }
+    }
+}
 
 
 

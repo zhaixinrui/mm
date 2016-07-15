@@ -6,13 +6,13 @@ import "os"
 
 // var Conf map[string] interface{}
 
-var Conf struct {
+var conf struct {
     HostFile string    `json:"host_file"`
     Concurrent int
     Timeout int
 }
 
-func LoadConfig(confFile string) (error) {
+func loadConfig(confFile string) (error) {
     f, err := os.Open(confFile)
     if err != nil {
         return err
@@ -20,7 +20,7 @@ func LoadConfig(confFile string) (error) {
     defer f.Close()
 
     d := json.NewDecoder(f)
-    err = d.Decode(&Conf)
+    err = d.Decode(&conf)
     if err != nil {
         return err
     }

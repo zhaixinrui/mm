@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 import "flag"
+import "os"
 
 var cmdFind = &Command{
     UsageLine: "find",
@@ -29,10 +30,20 @@ var (
 func init() {
     var fs = flag.NewFlagSet("find", flag.ContinueOnError)
     fs.BoolVar(&allMachine, "a", false, "is need get all machines, default false")
+    fs.StringVar(&moduleName, "m", "", "module exact name")
+    fs.StringVar(&moduleReg, "M", "", "module exact name")
+    fs.StringVar(&machineName, "s", "", "host exact name")
+    fs.StringVar(&machineReg, "S", "", "host exact name")
+    cmdFind.Flag = *fs
     cmdFind.Run = find
 }
 
 func find(cmd *Command, args []string) int {
-    fmt.Println(args)
+    cmdFind.Flag.Parse(args)
+    // fmt.Println(args)
+    fmt.Println(allMachine, moduleName, moduleReg, machineName, machineReg)
+    loadConfig("conf/mm.conf")
+    var ppid = os.Getppid()
+    fmt.Println(ppid)
     return 1
 }
