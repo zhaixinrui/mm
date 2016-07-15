@@ -8,7 +8,9 @@ function build(){
     echo $1|egrep '\.go$' > /dev/null
     if [ 0 -eq $? ];then
         go build -o mm *.go >$DIR/buildresult 2>&1
+        echo -e "\033[49;31;5m"
         cat $DIR/buildresult
+        echo -e "\033[0m"
         rm -f $DIR/buildresult
         echo "build finish" $(date +"%H:%M:%S")
     # else

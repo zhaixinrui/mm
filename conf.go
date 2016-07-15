@@ -2,12 +2,18 @@ package main
 
 import "encoding/json"
 import "os"
-// import "fmt"
+import "fmt"
 
 // var Conf map[string] interface{}
+type machine struct {
+    Ip string
+    Host string
+    Module []string
+}
 
 var conf struct {
-    HostFile string    `json:"host_file"`
+    ResultFilePath string    `json:"result_file_path"`
+    HostList []machine       `json:"host_list"`
     Concurrent int
     Timeout int
 }
@@ -27,4 +33,8 @@ func loadConfig(confFile string) (error) {
 
     // fmt.Println(Conf)
     return nil
+}
+
+func getResultFilePath() (string){
+    return fmt.Sprintf("%s/mm_%d_%d.txt", conf.ResultFilePath, os.Getuid(), os.Getppid())
 }
