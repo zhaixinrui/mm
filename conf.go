@@ -3,6 +3,7 @@ package main
 import "encoding/json"
 import "os"
 import "fmt"
+import "os/user"
 
 // var Conf map[string] interface{}
 type machine struct {
@@ -18,7 +19,8 @@ var conf struct {
     Timeout int
 }
 
-func loadConfig(confFile string) (error) {
+func loadConfig() (error) {
+    confFile := "conf/mm.conf"
     f, err := os.Open(confFile)
     if err != nil {
         return err
@@ -36,5 +38,10 @@ func loadConfig(confFile string) (error) {
 }
 
 func getResultFilePath() (string){
-    return fmt.Sprintf("%s/mm_%d_%d.txt", conf.ResultFilePath, os.Getuid(), os.Getppid())
+    user, _ := user.Current()
+    return fmt.Sprintf("%s/mm_%s_%d.txt", conf.ResultFilePath, user.Username, os.Getppid())
+}
+
+func getAllMachines() map[string]machine{
+    return nil
 }

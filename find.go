@@ -2,9 +2,7 @@ package main
 
 import "fmt"
 import "flag"
-// import "os"
 import "strings"
-// import "sort"
 
 var cmdFind = &Command{
     UsageLine: "find",
@@ -13,21 +11,20 @@ var cmdFind = &Command{
 Find is used to get machines by rules and write the result into a single file.
 All other command are based on this machine list.
 
--a        find all machines (default: false).
 -m        find machines by module name (fuzzy match).
 -s        find machines by host name (fuzzy match).
 `,
 }
 
 var (
-    allMachine bool
+    isAppend bool
+    isDelete bool
     moduleName string
     machineName string
 )
 
 func init() {
     var fs = flag.NewFlagSet("find", flag.ContinueOnError)
-    fs.BoolVar(&allMachine, "a", false, "is need get all machines, default false")
     fs.StringVar(&moduleName, "m", "", "module fuzzy name")
     fs.StringVar(&machineName, "s", "", "host fuzzy name")
     cmdFind.Flag = *fs
@@ -36,8 +33,8 @@ func init() {
 
 func find(cmd *Command, args []string) int {
     cmdFind.Flag.Parse(args)
-    machines := filter(allMachine, moduleName, machineName)
-    fmt.Println(getResultFilePath())
+    machines := filter(moduleName, machineName)
+    writeResult(machines)
     for _,v := range machines{
         printNormal(fmt.Sprintf("%-20s%s", v.Ip, v.Host))
     }
@@ -46,7 +43,6 @@ func find(cmd *Command, args []string) int {
 }
 
 func needDelete(moduleName string, machineName string, machine machine) bool {
-    // fmt.Println(machine.Module, moduleName, sort.SearchStrings(machine.Module, moduleName))
     if "" != moduleName {
         find := false
         for _,v := range machine.Module {
@@ -64,20 +60,12 @@ func needDelete(moduleName string, machineName string, machine machine) bool {
     return false
 }
 
-func filter(allMachine bool, moduleName string, machineName string) (machines []machine) {
-    loadConfig("conf/mm.conf")
-    // if(allMachine){
-    //     return conf.HostList
-    // }
-    machines = conf.HostList
-
-    for index := 0; index < len(machines); {
-        // fmt.Println(index, machine, len(machines), machines[:index], machines[index+1:])
-        if needDelete(moduleName, machineName, machines[index]) {
-            machines = append(machines[:index], machines[index+1:]...)
-        }else{
-            // 没有找到的话，游标前移一位，继续检查下一个
-            index++
+func filter(moduleName string, machineName string) (machines map[string]machine) {
+    machines = make(map[string]machine)
+    // allMachine是全量的机器列表，然后根据规则进行过滤，最终得到待操作的机器列表
+    for _,m := range conf.HostList{
+        if !needDelete(moduleName, machineName, m){
+            machines[m.Ip] = m
         }
     }
 
