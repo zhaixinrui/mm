@@ -11,6 +11,7 @@ var cmdFind = &Command{
 Find is used to get machines by rules and write the result into a single file.
 All other command are based on this machine list.
 
+-a        find all machines
 -m        find machines by module name (fuzzy match).
 -s        find machines by host name (fuzzy match).
 `,
@@ -20,12 +21,16 @@ func init() {
     var fs = flag.NewFlagSet("find", flag.ContinueOnError)
     fs.StringVar(&moduleName, "m", "", "module fuzzy name")
     fs.StringVar(&machineName, "s", "", "host fuzzy name")
+    fs.BoolVar(&isAll, "a", false, "host fuzzy name")
     cmdFind.Flag = *fs
     cmdFind.Run = find
 }
 
 func find(cmd *Command, args []string) int {
-    cmdFind.Flag.Parse(args)
+    err := cmdFind.Flag.Parse(args)
+    if err != nil{
+        return 1
+    }
     machines := filter(moduleName, machineName)
     writeResult(machines)
     for _,v := range machines{

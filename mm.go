@@ -29,6 +29,7 @@ var commands = []*Command{
 
 // 命令行参数
 var (
+    isAll    bool
     isAppend bool
     isDelete bool
     moduleName string

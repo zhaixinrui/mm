@@ -26,7 +26,10 @@ func init() {
 }
 
 func ssh(cmd *Command, args []string) int {
-    cmdSsh.Flag.Parse(args)
+    err := cmdSsh.Flag.Parse(args)
+    if err != nil{
+        return 1
+    }
     machines, _ := readResult()
     if cmdMd5.Flag.NArg() <= 0 {
         tmpl(os.Stdout, helpTemplate, cmdMd5)

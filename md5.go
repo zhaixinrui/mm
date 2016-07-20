@@ -26,7 +26,10 @@ func init() {
 }
 
 func md5(cmd *Command, args []string) int {
-    cmdMd5.Flag.Parse(args)
+    err := cmdMd5.Flag.Parse(args)
+    if err != nil{
+        return 1
+    }
     machines,_ := readResult()
 
     if cmdMd5.Flag.NArg() <= 0 {
@@ -41,7 +44,6 @@ func md5(cmd *Command, args []string) int {
 
     filename := cmdMd5.Flag.Arg(0)
     command := "md5 " + filename
-    // fmt.Println(machines, command, concurrent, timeout, sleep)
     BatchExecTask(machines, command, concurrent, timeout, sleep)
 
     // for _,m := range machines {
