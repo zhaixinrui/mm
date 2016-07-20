@@ -7,6 +7,7 @@ import (
     "strings"
     "io"
     "html/template"
+    "time"
     // "reflect"
 )
 
@@ -23,7 +24,19 @@ var commands = []*Command{
     cmdFind,
     cmdList,
     cmdSsh,
+    cmdMd5,
 }
+
+// 命令行参数
+var (
+    isAppend bool
+    isDelete bool
+    moduleName string
+    machineName string
+    timeout time.Duration
+    sleep time.Duration
+    concurrent int
+)
 
 func (c *Command) Name() string {
     usageLine := strings.Split(c.UsageLine, " ")
@@ -100,8 +113,10 @@ func main() {
     for _,cmd := range commands {
         if cmd.Name() == args[0] {
             cmd.Run(cmd, args[1:])
+            return
         }
     }
+    usage()
 }
 
 

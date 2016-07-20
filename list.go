@@ -17,13 +17,6 @@ It will modify the result file of comman 'Find'
 `,
 }
 
-// var (
-//     isAppend bool
-//     isDelete bool
-//     moduleName string
-//     machineName string
-// )
-
 func init() {
     var fs = flag.NewFlagSet("list", flag.ContinueOnError)
     fs.BoolVar(&isAppend, "a", false, "append machines to last result")

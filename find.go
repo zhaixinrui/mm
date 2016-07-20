@@ -16,13 +16,6 @@ All other command are based on this machine list.
 `,
 }
 
-var (
-    isAppend bool
-    isDelete bool
-    moduleName string
-    machineName string
-)
-
 func init() {
     var fs = flag.NewFlagSet("find", flag.ContinueOnError)
     fs.StringVar(&moduleName, "m", "", "module fuzzy name")

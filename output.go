@@ -3,9 +3,6 @@ package main
 import "fmt"
 
 func printNormal(content ...interface{}){
-    // content[0] = "\x1b[0;31m" + content[0].(string)
-    // content = append(content, "\n\x1b[0m")
-    // fmt.Println(content...)
     print(37, content...)
 }
 
@@ -22,8 +19,7 @@ func printYellow(content ...interface{}){
 }
 
 func print(color int, content ...interface{}){
-    prefix := fmt.Sprintf("\x1b[0;%dm", color)
-    content[0] = prefix + content[0].(string)
+    content[0] = fmt.Sprintf("\x1b[0;%dm%+v", color, content[0])
     content = append(content, "\x1b[0m")
     fmt.Println(content...)
 }
