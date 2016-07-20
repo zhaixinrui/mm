@@ -1,8 +1,9 @@
 package main
 
-// import "fmt"
+import "fmt"
 import "flag"
 import "os"
+import "time"
 
 
 var cmdSsh = &Command{
@@ -19,15 +20,15 @@ It must used after command 'Find' or 'List'
 }
 
 var (
-    timeout int
-    sleep int
+    timeout time.Duration
+    sleep time.Duration
     concurrent int
 )
 
 func init() {
     var fs = flag.NewFlagSet("ssh", flag.ContinueOnError)
-    fs.IntVar(&timeout, "t", 0 , "command exec timeout per machine")
-    fs.IntVar(&sleep, "s", 0, "sleep time afer exec command")
+    fs.DurationVar(&timeout, "t", 0 , "command exec timeout per machine")
+    fs.DurationVar(&sleep, "s", 0, "sleep time afer exec command")
     fs.IntVar(&concurrent, "c", 1, "concurrent when exec command")
     cmdSsh.Flag = *fs
     cmdSsh.Run = ssh
@@ -39,7 +40,8 @@ func ssh(cmd *Command, args []string) int {
     
     if cmdSsh.Flag.NArg() > 0 {
         cmd := cmdSsh.Flag.Arg(0)
-        batchExec(machines, cmd, concurrent, timeout, sleep)
+        // fmt.Println(machines, cmd, concurrent, timeout, sleep)
+        BatchExecTask(machines, cmd, concurrent, timeout, sleep)
     } else {
         tmpl(os.Stdout, helpTemplate, cmdSsh)
     }
