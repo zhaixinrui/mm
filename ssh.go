@@ -2,7 +2,7 @@ package main
 
 import "flag"
 import "os"
-import "fmt"
+// import "fmt"
 
 var cmdSsh = &Command{
     UsageLine: "ssh [-t=0s] [-s=0s] command",
