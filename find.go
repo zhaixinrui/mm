@@ -40,6 +40,18 @@ func find(cmd *Command, args []string) int {
     return 1
 }
 
+func filter(moduleName string, machineName string) (machines map[string]machine) {
+    machines = make(map[string]machine)
+    // allMachine是全量的机器列表，然后根据规则进行过滤，最终得到待操作的机器列表
+    for _,m := range conf.HostList{
+        if !needDelete(moduleName, machineName, m){
+            machines[m.Ip] = m
+        }
+    }
+
+    return machines
+}
+
 func needDelete(moduleName string, machineName string, machine machine) bool {
     if "" != moduleName {
         find := false
@@ -58,17 +70,6 @@ func needDelete(moduleName string, machineName string, machine machine) bool {
     return false
 }
 
-func filter(moduleName string, machineName string) (machines map[string]machine) {
-    machines = make(map[string]machine)
-    // allMachine是全量的机器列表，然后根据规则进行过滤，最终得到待操作的机器列表
-    for _,m := range conf.HostList{
-        if !needDelete(moduleName, machineName, m){
-            machines[m.Ip] = m
-        }
-    }
-
-    return machines
-}
 
 
 

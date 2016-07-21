@@ -3,7 +3,7 @@ package main
 import "encoding/json"
 import "os"
 import "fmt"
-import "os/user"
+import "time"
 
 // var Conf map[string] interface{}
 type machine struct {
@@ -16,7 +16,8 @@ var conf struct {
     ResultFilePath string    `json:"result_file_path"`
     HostList []machine       `json:"host_list"`
     Concurrent int
-    Timeout int
+    Timeout time.Duration
+    Sleep  time.Duration
 }
 
 func loadConfig() (error) {
@@ -38,8 +39,7 @@ func loadConfig() (error) {
 }
 
 func getResultFilePath() (string){
-    user, _ := user.Current()
-    return fmt.Sprintf("%s/mm_%s_%d.txt", conf.ResultFilePath, user.Username, os.Getppid())
+    return fmt.Sprintf("%s/mm_%s_%d.txt", conf.ResultFilePath, os.Getenv("USER"), os.Getppid())
 }
 
 func getAllMachines() map[string]machine{

@@ -26,7 +26,6 @@ func readResult() (machines map[string]machine, err error) {
     resultFile := getResultFilePath()
     f,err := os.Open(resultFile)
     if err != nil {
-        // printRed(err)
         return
     }
     defer f.Close()

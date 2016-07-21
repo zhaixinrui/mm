@@ -3,8 +3,9 @@ package main
 import "fmt"
 import "time"
 import "bytes"
-import "os/user"
+import "os"
 import "io/ioutil"
+// import "math"
 
 import gossh "golang.org/x/crypto/ssh"
 
@@ -20,27 +21,32 @@ type Task struct {
 
 func handleMachine(task Task) (Task){
     // 通过信任关系与目标机器建立连接
-    user, _ := user.Current()
-    privateKeyFile := user.HomeDir + "/.ssh/id_rsa"
+    privateKeyFile := os.Getenv("HOME") + "/.ssh/id_rsa"
     privateBytes, err := ioutil.ReadFile(privateKeyFile)
     if err != nil {
         panic("Failed to load private key from file : " + privateKeyFile + " error: " + err.Error())
     }
     signer, _ := gossh.ParsePrivateKey(privateBytes)
     config := &gossh.ClientConfig{
-        User: user.Username,
+        User: os.Getenv("USER"),
         Auth: []gossh.AuthMethod{
             gossh.PublicKeys(signer),
         },
         Timeout: task.Timeout,
     }
-    client, err := gossh.Dial("tcp", "127.0.0.1:22", config)
+    client, err := gossh.Dial("tcp", task.Host + ":22", config)
     if err != nil {
-        panic("Failed to dial: " + err.Error())
+        fmt.Println("============", os.Getenv("USER"), "@", task.Host, "============")
+        printRed("Failed to connect: " + err.Error())
+        task.Error = err
+        return task
     }
     session, err := client.NewSession()
     if err != nil {
-        panic("Failed to create session: " + err.Error())
+        fmt.Println("============", os.Getenv("USER"), "@", task.Host, "============")
+        printRed("Failed to create session: " + err.Error())
+        task.Error = err
+        return task
     }
     defer session.Close()
 
@@ -50,10 +56,9 @@ func handleMachine(task Task) (Task){
     session.Stdout = &stdout
     session.Stderr = &stderr
     err = session.Run(task.Command)
-    fmt.Println("============", user.Username, "@", task.Host, "============")
+    fmt.Println("============", os.Getenv("USER"), "@", task.Host, "============")
     if err != nil {
         printRed(stderr.String())
-        // panic("Failed to run: " + err.Error())
     }else{
         printNormal(stdout.String())
     }
@@ -92,6 +97,11 @@ func BatchExecTask(machines map[string]machine, command string, concurrent int, 
         }
     }
     // 启动任务协程
+    // concurrent = math.Max(concurrent, 1)
+    if(concurrent < 1){
+        concurrent = 1
+    }
+    // concurrent = math.Min(concurrent, len(machines))
     for i := 1; i <= concurrent; i++ {
         go execTask(i, tasks, outputs)
     }

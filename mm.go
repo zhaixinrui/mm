@@ -47,15 +47,15 @@ func (c *Command) Name() string {
 var usageTemplate = `mm is a tool for managing machines
 
 Usage:
-    bee command [arguments]
+    mm command [arguments]
 
 The commands are:{{range .}}
     {{.Name | printf "%-11s"}} {{.Short}}{{end}}
 
-Use "bee help [command]" for more information about a command.
+Use "mm help [command]" for more information about a command.
 `
 
-var helpTemplate = `usage: bee {{.UsageLine}}
+var helpTemplate = `usage: mm {{.UsageLine}}
 
 {{.Long | trim}}
 `

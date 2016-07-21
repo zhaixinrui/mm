@@ -2,6 +2,7 @@ package main
 
 import "flag"
 import "os"
+import "fmt"
 
 var cmdSsh = &Command{
     UsageLine: "ssh [-t=0s] [-s=0s] command",
@@ -17,10 +18,11 @@ It must used after command 'Find' or 'List'
 }
 
 func init() {
+    loadConfig()
     var fs = flag.NewFlagSet("ssh", flag.ContinueOnError)
-    fs.DurationVar(&timeout, "t", 0 , "command exec timeout per machine")
-    fs.DurationVar(&sleep, "s", 0, "sleep time afer exec command")
-    fs.IntVar(&concurrent, "c", 1, "concurrent when exec command")
+    fs.DurationVar(&timeout, "t", conf.Timeout, "command exec timeout per machine")
+    fs.DurationVar(&sleep, "s", conf.Sleep, "sleep time afer exec command")
+    fs.IntVar(&concurrent, "c", conf.Concurrent, "concurrent when exec command")
     cmdSsh.Flag = *fs
     cmdSsh.Run = ssh
 }
@@ -31,8 +33,8 @@ func ssh(cmd *Command, args []string) int {
         return 1
     }
     machines, _ := readResult()
-    if cmdMd5.Flag.NArg() <= 0 {
-        tmpl(os.Stdout, helpTemplate, cmdMd5)
+    if cmdSsh.Flag.NArg() <= 0 {
+        tmpl(os.Stdout, helpTemplate, cmdSsh)
         return 1
     }
 
@@ -43,8 +45,16 @@ func ssh(cmd *Command, args []string) int {
     
     command := cmdSsh.Flag.Arg(0)
     // fmt.Println(machines, command, concurrent, timeout, sleep)
-    BatchExecTask(machines, command, concurrent, timeout, sleep)
-
+    result := BatchExecTask(machines, command, concurrent, timeout, sleep)
+    success,fail := 0, 0
+    for _,r := range result {
+        if r.Error == nil {
+            success++
+        }else{
+            fail++
+        }
+    }
+    printYellow("Total:", len(machines), "Success:", success, "Failed:", fail)
     return 1
 }
 
