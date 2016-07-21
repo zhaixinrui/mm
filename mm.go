@@ -110,7 +110,6 @@ func main() {
         return
     }
 
-    loadConfig()
     for _,cmd := range commands {
         if cmd.Name() == args[0] {
             cmd.Run(cmd, args[1:])

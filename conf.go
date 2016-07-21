@@ -20,22 +20,21 @@ var conf struct {
     Sleep  time.Duration
 }
 
-func loadConfig() (error) {
+func init() {
     confFile := "conf/mm.conf"
     f, err := os.Open(confFile)
     if err != nil {
-        return err
+        printRed("load conf:", confFile, "fail:", err)
+        return
     }
     defer f.Close()
 
     d := json.NewDecoder(f)
     err = d.Decode(&conf)
     if err != nil {
-        return err
+        printRed("parse conf:", confFile, "fail:", err)
+        return
     }
-
-    // fmt.Println(Conf)
-    return nil
 }
 
 func getResultFilePath() (string){

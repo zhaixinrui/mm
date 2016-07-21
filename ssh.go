@@ -18,7 +18,6 @@ It must used after command 'Find' or 'List'
 }
 
 func init() {
-    loadConfig()
     var fs = flag.NewFlagSet("ssh", flag.ContinueOnError)
     fs.DurationVar(&timeout, "t", conf.Timeout, "command exec timeout per machine")
     fs.DurationVar(&sleep, "s", conf.Sleep, "sleep time afer exec command")
