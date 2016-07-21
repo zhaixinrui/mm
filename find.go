@@ -21,7 +21,7 @@ func init() {
     var fs = flag.NewFlagSet("find", flag.ContinueOnError)
     fs.StringVar(&moduleName, "m", "", "module fuzzy name")
     fs.StringVar(&machineName, "s", "", "host fuzzy name")
-    fs.BoolVar(&isAll, "a", false, "host fuzzy name")
+    fs.BoolVar(&isAll, "a", true, "host fuzzy name")
     cmdFind.Flag = *fs
     cmdFind.Run = find
 }
